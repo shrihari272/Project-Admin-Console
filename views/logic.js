@@ -17,6 +17,9 @@ async function getAllItems() {
                 return
             }
             all_py = `<h1>#Python</h1>`
+            if(data == undefined){
+                spin.style.display = "none"
+                return }
             data.tasks.forEach((item, index) => {
                 all_py += `
                         <label style="display:none;" class="id">${item._id}</label>
@@ -207,11 +210,15 @@ async function remove() {
 }
 
 out.addEventListener('click', async (e) => {
-    alert('Click on cancel to logout')
-    await fetch('/logout').then((data) => {
-
+    await fetch('/api/v1/logout',{
+        method: 'DELETE',
+        body: JSON.stringify({ id: id }),
+        headers: {
+            "Content-Type": "application/json"
+        },
+    },).then((data) => {
+        location.reload()
     }).catch((e) => console.log(e))
-    location.reload()
 });
 
 home.addEventListener('click', async (e) => {

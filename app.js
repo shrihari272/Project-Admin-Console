@@ -3,49 +3,56 @@ const express = require('express')
 const routes = require('./routes/api.js')
 const bodyparser = require('body-parser');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const flash = require('connect-flash');
+const session = require('express-session');
 const { connectDB } = require('./controllers/database.js')
 
 app = express()
 app.use(express.json())
-app.use(authentication)
+// Set view engine as EJS
+app.use(express.static(path.join(__dirname, 'public')));
+app.engine('ejs', require('ejs').renderFile);
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, ''));
+app.use(cookieParser())
+app.use(session({
+    secret: 'secret',
+    cookie: { maxAge: 60000 },
+    resave: true,
+    saveUninitialized: true
+}))
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(flash())
+// 
 app.use('/images', express.static('images'))
 app.use("/api/v1", routes)
-app.use(bodyparser.urlencoded({ extended: false }));
 
-function authentication(req, res, next) {
-    var authheader = req.headers.authorization;
-    // console.log(req.headers);
-    if (!authheader) {
-        res.status(401)
-            .set({ 'WWW-Authenticate': 'Basic realm="Confirm password"' })
-            .end('Authentication required');
+
+async function checkAuthBegin(req, res, next) {
+    //Token validation
+    let cookie = req.headers.cookie
+    if (!cookie) {
+        return res.redirect('/api/v1/login')
     }
-    if(authheader === undefined)
-        return
-    var auth = new Buffer.from(authheader.split(' ')[1],
-        'base64').toString().split(':');
-    var user = auth[0];
-    var pass = auth[1];
-
-    if (user === 'admin' && pass === process.env.SERVER_PASS) {
-        next();
-    } else {
-        res.status(401)
-            .set({ 'WWW-Authenticate': 'Basic realm="Confirm password"' })
-            .end('Authentication required');
+    // var auth = cookie.split('=')
+    let token = cookie
+    token = token.substring(token.search("%7B") + 3, token.search("%7D"))
+    try {
+        jwt.verify(token, process.env.SECRET)
+    } catch (error) {
+        return res.redirect('/api/v1/login')
     }
-
+    next()
 }
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.get(['/', 'index', 'index.html'], (req, res) => {
-    res.status(200).sendFile(path.resolve('templets/index.html'))
+app.get('/', checkAuthBegin, (req, res) => {
+    res.status(200).render('views/index')
 })
 
-app.get('/logout', (req, res) => {
-    res.status(401)
-        .set({ 'WWW-Authenticate': 'Basic realm="Confirm password"' })
-        .end('You have successfully logged out');
+app.post('/', checkAuthBegin, (req, res) => {
+    res.status(200).render('views/index')
 })
 
 app.use((req, res, next) => {

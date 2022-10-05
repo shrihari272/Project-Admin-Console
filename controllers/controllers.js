@@ -1,7 +1,12 @@
 const { model } = require('./database.js')
 const path = require('path')
-
-const getAllItems = async (req, res) => {
+const users = require('./dbUsers')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const getAllItems = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
     try {
         const task = await model.find({ section: req.params.section })
         res.status(200).send({ tasks: task, size: task.length })
@@ -10,7 +15,10 @@ const getAllItems = async (req, res) => {
     }
 }
 
-const getItems = async (req, res) => {
+const getItems = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
     try {
         const item = await model.findOne({ _id: req.params.id })
         res.status(200).send({
@@ -31,7 +39,10 @@ const getItems = async (req, res) => {
 }
 
 
-const createItems = async (req, res) => {
+const createItems = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
     try {
         const task = await model.create(req.body)
         res.status(201).json(task)
@@ -42,6 +53,9 @@ const createItems = async (req, res) => {
 
 
 async function removeItems(req, res, next) {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
     try {
         await model.deleteOne({ _id: req.params.id })
         res.status(202).send('From controller removeItem')
@@ -51,7 +65,10 @@ async function removeItems(req, res, next) {
 }
 
 
-const updateItems = async (req, res) => {
+const updateItems = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
     try {
         const task = await model.findOneAndUpdate({ _id: req.params.id }, req.body)
         res.status(200).send('From controller updateItem\n' + task)
@@ -61,11 +78,57 @@ const updateItems = async (req, res) => {
 }
 
 const logicJS = (req, res) => {
-    res.status(200).sendFile(path.resolve('templets/logic.js'));
+    res.status(200).sendFile(path.resolve('views/logic.js'));
 }
 
 const stylesCSS = (req, res) => {
-    res.status(200).sendFile(path.resolve('templets/styles.css'));
+    res.status(200).sendFile(path.resolve('views/styles.css'));
+}
+
+const authCheckLogin = async (req, res) => {
+    let email = req.body.email
+    let user = users.find((user) => user.email == email)
+    let pass = req.body.pass
+    if (!user) {
+        req.flash('err', "Invalid credentials")
+        return res.redirect('/api/v1/login')
+    }
+    let check = await bcrypt.compare(pass, user.pass);
+    let token = jwt.sign({ email: user.email }, process.env.SECRET, {
+        expiresIn: "10m" // Time limit for Token
+    },)
+    token = `{${token}}`
+    if (check)
+        res.cookie('ACCESS_TOKEN', token).redirect('/')
+    else {
+        req.flash('err', "Invalid credentials")
+        res.redirect('/api/v1/login')
+    }
+}
+
+const authLogin = (req, res) => {
+    const err = req.flash('err')
+    res.render('views/login', { err });
+}
+
+const authLogout = (req, res) => {
+    res.cookie('ACCESS_TOKEN', "Expired")
+    res.send({ msg: "Logout" })
+}
+
+async function checkAuth(req, res, next) {
+    // Token validation
+    let cookie = req.headers.cookie
+    if (!cookie)
+        return { msg: 'redirect' }
+    let token = cookie
+    token = token.substring(token.search("%7B") + 3, token.search("%7D"))
+    try {
+        jwt.verify(token, process.env.SECRET)
+    } catch (error) {
+        return { msg: 'redirect' }
+    }
+    return { msg: 'succcess' }
 }
 
 module.exports = {
@@ -76,4 +139,8 @@ module.exports = {
     updateItems,
     logicJS,
     stylesCSS,
+    authCheckLogin,
+    authLogin,
+    authLogout,
+    checkAuth
 }
