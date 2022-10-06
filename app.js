@@ -25,7 +25,6 @@ app.use(session({
 }))
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(flash())
-// 
 app.use('/images', express.static('images'))
 app.use("/api/v1", routes)
 
@@ -36,7 +35,6 @@ async function checkAuthBegin(req, res, next) {
     if (!cookie) {
         return res.redirect('/api/v1/login')
     }
-    // var auth = cookie.split('=')
     let token = cookie
     token = token.substring(token.search("%7B") + 3, token.search("%7D"))
     try {

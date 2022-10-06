@@ -96,7 +96,7 @@ async function getAllItems() {
     click_listen()
 }
 
-////////////////Changs in add and back
+////////////////Change in add and back
 function change() {
     if (bnt.innerText === '+') {
         var main = document.querySelector('.main')

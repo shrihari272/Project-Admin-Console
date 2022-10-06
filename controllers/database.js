@@ -1,6 +1,6 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-const connectionString = `mongodb+srv://test-js:${process.env.DB_CONFIG}@project-node.oihuw7h.mongodb.net/Source_git?retryWrites=true&w=majority`
+const connectionString = process.env.DB_CONFIG
 
 const connectDB = async()=>{
     await mongoose.connect(connectionString).then(()=>console.log("DB connected..."))
