@@ -17,9 +17,10 @@ async function getAllItems() {
                 return
             }
             all_py = `<h1>#Python</h1>`
-            if(data == undefined){
+            if (data == undefined) {
                 spin.style.display = "none"
-                return }
+                return
+            }
             data.tasks.forEach((item, index) => {
                 all_py += `
                         <label style="display:none;" class="id">${item._id}</label>
@@ -136,7 +137,7 @@ async function create() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        snackBar("Code Inserted") 
+        snackBar("Code Inserted")
         setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
@@ -190,7 +191,7 @@ async function update() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        snackBar("Code Edited") 
+        snackBar("Code Edited")
         setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
@@ -205,14 +206,14 @@ async function remove() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        snackBar("Code Deleted") 
+        snackBar("Code Deleted")
         setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
 
 out.addEventListener('click', async (e) => {
-    await fetch('/api/v1/logout',{
+    await fetch('/api/v1/logout', {
         method: 'DELETE',
         body: JSON.stringify({ id: id }),
         headers: {
@@ -227,7 +228,7 @@ home.addEventListener('click', async (e) => {
     location.reload()
 });
 
-function snackBar(msg){
+function snackBar(msg) {
     var x = document.getElementById("snackbar");
     x.innerHTML = msg
     x.className = "show"
