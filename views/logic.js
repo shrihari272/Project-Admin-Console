@@ -136,8 +136,8 @@ async function create() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        location.reload()
-        // getAllItems()
+        snackBar("Code Inserted") 
+        setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
@@ -190,7 +190,8 @@ async function update() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        location.reload()
+        snackBar("Code Edited") 
+        setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
@@ -204,7 +205,8 @@ async function remove() {
             "Content-Type": "application/json"
         },
     }).then(() => {
-        location.reload()
+        snackBar("Code Deleted") 
+        setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
@@ -224,5 +226,13 @@ out.addEventListener('click', async (e) => {
 home.addEventListener('click', async (e) => {
     location.reload()
 });
+
+function snackBar(msg){
+    var x = document.getElementById("snackbar");
+    x.innerHTML = msg
+    x.className = "show"
+    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    console.log("SnackBar");
+}
 
 getAllItems()
