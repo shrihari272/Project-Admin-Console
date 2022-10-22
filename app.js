@@ -38,7 +38,8 @@ async function checkAuthBegin(req, res, next) {
     let token = cookie
     token = token.substring(token.search("%7B") + 3, token.search("%7D"))
     try {
-        jwt.verify(token, process.env.SECRET)
+        let info = jwt.verify(token, process.env.SECRET)
+        req.flash("name",info.name)
     } catch (error) {
         return res.redirect('/api/v1/login')
     }
@@ -46,7 +47,8 @@ async function checkAuthBegin(req, res, next) {
 }
 
 app.get('/', checkAuthBegin, (req, res) => {
-    res.status(200).render('views/index')
+    var name = req.flash('name')
+    res.status(200).render('views/index',{ name })
 })
 
 app.post('/', checkAuthBegin, (req, res) => {

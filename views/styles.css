@@ -24,6 +24,7 @@ body {
     min-height: 100%;
     width: 100%;
     font-size: 0.9rem;
+    overflow-x: hidden;
 }
 
 .header {
@@ -42,13 +43,43 @@ img {
     top: 0.5rem;
 }
 
-ul li {
-    display: inline;
-    margin-left: 1rem;
+ul{
+    display: flex;
+    gap: 1rem;
 }
 
-li:first-child {
-    margin-left: 6rem;
+ul li {
+    display: inline;
+}
+
+nav {
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-div {
+    margin-left: 4.5rem;
+    display: flex;
+    width: 50%;
+}
+
+#user {
+    height: 2rem;
+    width: 8rem;
+    display: flex;
+    color: white;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    margin-right: 3rem;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+    letter-spacing: 1px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
 }
 
 .bnt-nav {
@@ -79,7 +110,8 @@ li:first-child {
 }
 
 .card,
-.soon {
+.soon,
+.sec-del {
     height: 4rem;
     margin: 3px;
     width: 99%;
@@ -90,6 +122,42 @@ li:first-child {
     cursor: pointer;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
+}
+
+.sec-list {
+    margin-top: 1.5rem;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.sec-del {
+    overflow: hidden;
+}
+
+.sec-del:hover::after {
+    opacity: 1;
+}
+
+.sec-input {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sec-del::after {
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    content: 'Delete';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.4s ease-in;
+    background-color: rgba(255, 0, 0, 0.28);
 }
 
 .desc {
@@ -140,6 +208,7 @@ footer {
     height: 3.1rem;
     padding: 5px;
     font-size: 1rem;
+    text-indent: 5px;
     backdrop-filter: blur(10px);
     border-radius: 10px;
 }
@@ -218,15 +287,16 @@ option {
     cursor: pointer;
 }
 
-i {
+.icon-del {
     font-size: 1rem;
     position: absolute;
     right: 3rem;
     bottom: 1.5rem;
     color: red;
     height: 1rem;
-    width: 1rem;
-    z-index: 3;
+    width: 2rem;
+    text-align: center;
+    z-index: 5;
 }
 
 @keyframes spinner {
@@ -268,7 +338,7 @@ i {
     padding: 16px;
     position: fixed;
     z-index: 1;
-    left: 45%;
+    left: 50%;
     bottom: 30px;
 }
 

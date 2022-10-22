@@ -1,113 +1,73 @@
 var bnt = document.querySelector('.floating-bnt')
-var all_py = ''
-var all_c = ''
-var all_php = ''
-var all_task = ''
+var all_section = ''
+var all_section_arrange = ''
+var btn_section = ''
 var id = ''
 async function getAllItems() {
     spin.style.display = "block"
     document.querySelector('body').style.overflow = "hidden"
-    ////////Accessing python files
-    await fetch('/api/v1/task/section/Python').then((res) => {
+    ////////Accessing All files
+
+    await fetch('/api/v1/section').then((res) => {
         return res.json()
     })
         .then((data) => {
-            if (data.status === 404) {
-                body.innerHTML = "<h1>Something went wrong</h1>"
-                return
-            }
-            all_py = `<h1>#Python</h1>`
-            if (data == undefined) {
-                spin.style.display = "none"
-                return
-            }
-            data.tasks.forEach((item, index) => {
-                all_py += `
-                        <label style="display:none;" class="id">${item._id}</label>
-                        <div class="card" onclick="click_listen()">
-                            <p class="desc">${item.description}</p>
-                        <i class="fa fa-trash-o icon-del"></i>
-                        </div>
-                    `
+            data.section.forEach((sec) => {
+                fetch(`/api/v1/task/section/${sec.section}`).then((res) => {
+                    return res.json()
+                })
+                    .then((each_sec) => {
+
+                        all_section += `<h1>#${sec.section}</h1>`
+                        if (each_sec.size == 0) {
+                            all_section += `<div class="soon">
+                                        <p class="desc">Comming Soon</p>
+                                    </div>`
+                        }
+                        each_sec.tasks.forEach((sec_data) => {
+                            all_section += `
+                            <label style="display:none;" class="id">${sec_data._id}</label>
+                            <div class="card" onclick="click_listen()">
+                                <p class="desc">${sec_data.description}</p>
+                            <i class="fa fa-trash-o icon-del"></i>
+                            </div>
+                            `
+                        })
+                        all_section_arrange += `<div class="section">${all_section}</div>`
+                        all_section = ''
+                        document.querySelector('.content-space').innerHTML = all_section_arrange
+
+                    }).then(() => {
+                        click_listen()
+                    })
+
             })
-            if (data.size == 0) {
-                all_py += `<div class="soon">
-                            <p class="desc">Comming Soon</p>
-                        </div>`
-            }
-            all_py = `<div class="section div-1">${all_py}</div>`
-        })
-    ////////Accessing C++ files
-    await fetch('/api/v1/task/section/C++').then((res) => {
-        return res.json()
-    })
-        .then((data) => {
-            if (data.status === 404) {
-                body.innerHTML = "<h1>Something went wrong</h1>"
-                return
-            }
-            // let all_task = ''
-            all_c = `<h1>#C++</h1>`
-            data.tasks.forEach((item, index) => {
-                all_c += `    <label style="display:none;" class="id">${item._id}</label>
-                        <div class="card" onclick="click_listen()">
-                            <p class="desc">${item.description}</p>
-                        <i class="fa fa-trash-o icon-del"></i>
-                        </div>
-                    `
-            })
-            if (data.size === 0) {
-                all_c += `<div class="soon">
-                            <p class="desc">Comming Soon</p>
-                        </div>`
-            }
-            all_c = `<div class="section div-2">${all_c}</div>`
-            // document.querySelector('.content-space').innerHTML = all_py + all_c
-        })
-    ////////Accessing php files
-    await fetch('/api/v1/task/section/Php').then((res) => {
-        return res.json()
-    })
-        .then((data) => {
-            if (data.status === 404) {
-                body.innerHTML = "<h1>Something went wrong</h1>"
-                return
-            }
-            all_php = `<h1>#Php</h1>`
-            data.tasks.forEach((item, index) => {
-                all_php += ` <label style="display:none;" class="id">${item._id}</label>
-                        <div class="card" onclick="click_listen()">
-                            <p class="desc">${item.description}</p>
-                        <i class="fa fa-trash-o icon-del"></i>
-                        </div>
-                    `
-            })
-            if (data.size === 0) {
-                all_php += `<div class="soon">
-                            <p class="desc">Comming Soon</p>
-                        </div>`
-            }
-            all_php = `<div class="section div-3">${all_php}</div>`
-            document.querySelector('.content-space').innerHTML = all_py + all_c + all_php
-        })
+
+        }).catch((e) => console.log(e))
     spin.style.display = "none"
     spin.style.backgroundImage = "none"
     spin.style.backdropFilter = "blur(0px)"
     document.querySelector('body').style.overflow = "auto"
-    click_listen()
 }
 
 ////////////////Change in add and back
-function change() {
+async function change() {
+    let option = ''
+    await fetch('/api/v1/section').then((res) => {
+        return res.json()
+    })
+        .then((data) => {
+            data.section.forEach((opt) => {
+                option += `<option value="${opt.section}">${opt.section}</option>`
+            })
+        })
     if (bnt.innerText === '+') {
         var main = document.querySelector('.main')
         main.innerHTML = `<section class="content-input">
                 <div class="content-space-input">
                     <select type="text" id="section" placeholder="Section">
                         <option value="select">--select--</option>
-                        <option value="Python">#Python</option>
-                        <option value="C++">#C++</option>
-                        <option value="Php">#Php</option>
+                        ${option}
                     </select>    
                     <input type="text" id="description" placeholder="Description">   
                     <textarea id="code" placeholder="Code"></textarea>
@@ -116,10 +76,10 @@ function change() {
                 <button class="floating-bnt" onclick="change()"><</button>
             </section>`
         bnt = document.querySelector('.floating-bnt')
+        document.querySelector('.sec-bnt').style.display = 'none';
     }
     else if (bnt.innerText === '<') {
         location.reload()
-        bnt = document.querySelector('.floating-bnt')
     }
 }
 
@@ -146,6 +106,7 @@ async function create() {
 
 async function getItem() {
     spin.style.display = "block"
+    document.querySelector('.sec-bnt').style.display = 'none';
     var main = document.querySelector('.main')
     await fetch(`/api/v1/task/${id}`).then((data) => {
         return data.json()
@@ -159,21 +120,25 @@ async function getItem() {
 
 function click_listen() {
     let i = 0
+    let click = false
     var div_click = document.querySelectorAll(".card")
     var del_click = document.querySelectorAll(".fa")
     var label = document.querySelectorAll(".id")
-    for (i = 0; i < div_click.length; i++) {
+    for (i = 0; i < del_click.length; i++) {
         let clicked = i
-        div_click[i].addEventListener('click', (e) => {
+        del_click[i].addEventListener('click', async (e) => {
             id = label[clicked].innerHTML;
-            getItem();
+            click = true
+            await remove();
         })
     }
     for (i = 0; i < div_click.length; i++) {
         let clicked = i
-        del_click[i].addEventListener('click', (e) => {
+        div_click[i].addEventListener('click', (e) => {
             id = label[clicked].innerHTML;
-            remove();
+            if (click)
+                return
+            getItem();
         })
     }
 }
@@ -201,13 +166,12 @@ async function remove() {
     spin.style.display = "block"
     await fetch(`/api/v1/task/${id}`, {
         method: 'DELETE',
-        body: JSON.stringify({ id: id }),
         headers: {
             "Content-Type": "application/json"
         },
-    }).then(() => {
+    }).then(async () => {
         snackBar("Code Deleted")
-        setTimeout(function () { location.reload() }, 1000);
+        setTimeout(function () { location.reload() }, 400);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
@@ -233,7 +197,95 @@ function snackBar(msg) {
     x.innerHTML = msg
     x.className = "show"
     setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
-    console.log("SnackBar");
+}
+
+async function btn_sec() {
+    spin.style.display = "block"
+    await fetch('/api/v1/section').then((res) => {
+        return res.json()
+    })
+        .then((data) => {
+            btn_section = `<h1 style="align-self: flex-start;margin-left: 10px;">#Section</h1>`
+            data.section.forEach((sec) => {
+                btn_section += `
+            <div class="sec-del" id="${sec._id}">
+                <p class="desc">${sec.section}</p>
+            </div>`
+            })
+            btn_section = `<div class="sec-list">${btn_section}</div>`
+            document.querySelector('.content-space').innerHTML = btn_section
+            btn_section = ''
+            sec_listen()
+            bnt.setAttribute('onclick', "sec_input()")
+        }).catch((e) => console.log(e))
+    spin.style.display = "none"
+}
+
+async function sec_delete(id) {
+    spin.style.display = "block"
+    await fetch(`/api/v1/section/${id}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id: id }),
+        headers: {
+            "Content-Type": "application/json"
+        },
+    },).then(async (data) => {
+        snackBar('Loading ...')
+        await btn_sec()
+        setTimeout(function () { snackBar('Section Deleted') }, 1000);
+    })
+    spin.style.display = "none"
+}
+
+async function sec_save() {
+    spin.style.display = "block"
+    if (section.value === '') {
+        alert("Section field required.")
+        spin.style.display = "none"
+        return
+    }
+    await fetch(`/api/v1/section/${id}`, {
+        method: 'POST',
+        body: JSON.stringify({ section: section.value }),
+        headers: {
+            "Content-Type": "application/json"
+        },
+    },).then((res) => res.json()).then(async (data) => {
+        snackBar('Loading ...')
+        if (data.msg) {
+            setTimeout(function () { snackBar('Section Already Exist') }, 1000);
+            return
+        }
+        setTimeout(function () { snackBar('Section Saved') }, 1000);
+        await btn_sec()
+    })
+    spin.style.display = "none"
+}
+
+function sec_listen() {
+    let i = 0
+    var div_click = document.querySelectorAll(".sec-del")
+    for (i = 0; i < div_click.length; i++) {
+        let clicked = i
+        div_click[i].addEventListener('click', (e) => {
+            sec_delete(div_click[clicked].id)
+        })
+    }
+}
+
+function sec_input() {
+    document.querySelector('.sec-list').innerHTML = `
+    <div class="sec-input">
+    <input type="text sec-text" id="section" style="width:60%;height:2.7rem;" placeholder="#Section"> 
+    <button id="submit" onclick="sec_save()" style="margin-bottom:5px; margin-left:5px;">Save</button>
+    </div>
+    `
+    if (bnt.innerText === '<') {
+        btn_sec()
+        bnt.innerHTML = '+'
+        return
+    }
+    bnt.innerHTML = "<"
 }
 
 getAllItems()

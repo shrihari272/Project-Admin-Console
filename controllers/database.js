@@ -27,9 +27,22 @@ const TaskShema = new mongoose.Schema({
         default : "Demo data code"
     }
 })
+
+const Section = new mongoose.Schema({
+    section : {
+        type : String,
+        required : [true , 'required field'],
+        trim : true,
+        maxlenght :[20, 'max lenght is 20 character'],
+        default : "Demo section"
+    }
+})
+
+const model_section =  mongoose.model('section-git',Section)
 const model = mongoose.model('git-code',TaskShema)
 
 module.exports = { 
     connectDB, 
-    model  
+    model,
+    model_section 
 }

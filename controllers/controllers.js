@@ -1,8 +1,9 @@
-const { model } = require('./database.js')
+const { model, model_section } = require('./database.js')
 const path = require('path')
 const users = require('./dbUsers')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+
 const getAllItems = async (req, res, next) => {
     var data = await checkAuth(req, res, next)
     if (data.msg === 'redirect')
@@ -94,7 +95,7 @@ const authCheckLogin = async (req, res) => {
         return res.redirect('/api/v1/login')
     }
     let check = await bcrypt.compare(pass, user.pass);
-    let token = jwt.sign({ email: user.email }, process.env.SECRET, {
+    let token = jwt.sign({ email: user.email, name: user.name }, process.env.SECRET, {
         expiresIn: "10m" // Time limit for Token
     },)
     token = `{${token}}`
@@ -115,6 +116,56 @@ const authLogout = (req, res) => {
     res.cookie('ACCESS_TOKEN', "Expired")
     res.send({ msg: "Logout" })
 }
+
+//edit user section
+const listSection = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
+    try {
+        const section = await model_section.find()
+        res.status(200).send({ section: section, size: section.length })
+    } catch (error) {
+        res.status(500).json({ msg: error })
+    }
+}
+
+const addSection = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
+    try {
+        let result = req.body.section
+        result = result[0].toUpperCase() + result.substring(1, result.length).toLowerCase()
+        let sec = await model_section.findOne({ section: result })
+        if (sec) {
+            res.status(200).json({ msg: "Section already in use" })
+            return
+        }
+        try {
+            const createSection = await model_section.create({ section: result })
+            res.status(201).json(createSection)
+        } catch (error) {
+            res.status(500).json({ msg: error })
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Section already in use" })
+    }
+
+}
+
+const removeSection = async (req, res, next) => {
+    var data = await checkAuth(req, res, next)
+    if (data.msg === 'redirect')
+        return res.redirect('/api/v1/login')
+    try {
+        await model_section.deleteOne({ _id: req.params.id })
+        res.status(202).send('Section Deleted')
+    } catch (error) {
+        res.status(500).json({ msg: error })
+    }
+}
+//
 
 async function checkAuth(req, res, next) {
     // Token validation
@@ -142,5 +193,8 @@ module.exports = {
     authCheckLogin,
     authLogin,
     authLogout,
-    checkAuth
+    checkAuth,
+    listSection,
+    addSection,
+    removeSection
 }
