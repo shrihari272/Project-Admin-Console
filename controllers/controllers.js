@@ -96,7 +96,7 @@ const authCheckLogin = async (req, res) => {
     }
     let check = await bcrypt.compare(pass, user.pass);
     let token = jwt.sign({ email: user.email, name: user.name }, process.env.SECRET, {
-        expiresIn: "10m" // Time limit for Token
+        expiresIn: "1h" // Time limit for Token
     },)
     token = `{${token}}`
     if (check)
@@ -149,7 +149,7 @@ const addSection = async (req, res, next) => {
             res.status(500).json({ msg: error })
         }
     } catch (error) {
-        res.status(500).json({ msg: "Section already in use" })
+        res.status(500).json({ msg: error })
     }
 
 }
@@ -159,7 +159,11 @@ const removeSection = async (req, res, next) => {
     if (data.msg === 'redirect')
         return res.redirect('/api/v1/login')
     try {
-        await model_section.deleteOne({ _id: req.params.id })
+        let data = req.params.id
+        id = data.substring(0,data.search(" "))
+        let sec_data = data.substring(data.search(" ")+1,data.length)
+        await model.deleteMany({ section: sec_data })
+        await model_section.deleteOne({ _id: id })
         res.status(202).send('Section Deleted')
     } catch (error) {
         res.status(500).json({ msg: error })

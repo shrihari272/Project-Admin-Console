@@ -21,7 +21,7 @@ async function getAllItems() {
                         all_section += `<h1>#${sec.section}</h1>`
                         if (each_sec.size == 0) {
                             all_section += `<div class="soon">
-                                        <p class="desc">Comming Soon</p>
+                                        <p class="desc">No Code Uploded</p>
                                     </div>`
                         }
                         each_sec.tasks.forEach((sec_data) => {
@@ -221,9 +221,9 @@ async function btn_sec() {
     spin.style.display = "none"
 }
 
-async function sec_delete(id) {
+async function sec_delete(id, data) {
     spin.style.display = "block"
-    await fetch(`/api/v1/section/${id}`, {
+    await fetch(`/api/v1/section/${id} ${data}`, {
         method: 'DELETE',
         body: JSON.stringify({ id: id }),
         headers: {
@@ -265,10 +265,11 @@ async function sec_save() {
 function sec_listen() {
     let i = 0
     var div_click = document.querySelectorAll(".sec-del")
+    var sec_click = document.querySelectorAll(".desc")
     for (i = 0; i < div_click.length; i++) {
         let clicked = i
         div_click[i].addEventListener('click', (e) => {
-            sec_delete(div_click[clicked].id)
+            sec_delete(div_click[clicked].id, sec_click[clicked].innerHTML)
         })
     }
 }
