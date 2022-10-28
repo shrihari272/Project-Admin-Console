@@ -5,13 +5,13 @@ const users =
             "email": "admin",
             "pass": "$2b$10$xQ49ST/NBLHkpYOy51MQEuK0K3lIgKc5CQyeLjSQrha60INWVAPdu"
         },
-        { 
-            "name": "Ashik", 
-            "email": "ashik@123", 
-            "pass": "$2b$10$.ePnQxTpMnMOF6Kb3/eVZelIh2P/cz7SASk8SC//KTZ5FydOH6kOm" 
+        {
+            "name":"Ashik",
+            "email":"ashik@123",
+            "pass":"$2b$10$qFy30IC4pQsg.ezVYfxNLOcIPzKdSh7seB5qymLs/dEgEKRoRYzx2"
         },
         {
-            "name":"Shashank Saralaya",
+            "name":"Shashank",
             "email":"SSaralaya",
             "pass":"$2b$10$j8hr39gk5F7RnUpnCpJElOYuawsF35QFrcCuGx6FAVBOhxgprbJnu"
         },
