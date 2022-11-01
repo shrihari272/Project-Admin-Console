@@ -28,7 +28,7 @@ const users =
         {
             "name":"PRAJWAL",
             "email":"PRAJWAL",
-            "pass":"$2b$10$kd7e3DDr42uvb2onvY9oo.lf9Em.QZT3SbH6.3wOV6ICblRI1Ux6.",
+            "pass":"$2b$10$1w44iM9AjPl2QC5ll9x79..PhXXqEkmVkKrnaGIkPh5A8qM7OPuGe"
         }
     ]
 
