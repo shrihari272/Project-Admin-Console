@@ -21,7 +21,7 @@ async function getAllItems() {
                         all_section += `<h1>#${sec.section}</h1>`
                         if (each_sec.size == 0) {
                             all_section += `<div class="soon">
-                                        <p class="desc">No Code Uploaded</p>
+                                        <p class="desc">No Code Uploded</p>
                                     </div>`
                         }
                         each_sec.tasks.forEach((sec_data) => {
