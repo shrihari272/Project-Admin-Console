@@ -109,7 +109,7 @@ const authCheckLogin = async (req, res) => {
 
 const authLogin = (req, res) => {
     const err = req.flash('err')
-    res.render('views/login', { err });
+    res.render('views/interface', { err });
 }
 
 const authLogout = (req, res) => {

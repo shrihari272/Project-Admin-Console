@@ -24,6 +24,11 @@ const users =
             "name":"Vivian Serrao",
             "email":"vvn",
             "pass":"$2b$10$Cyjfr8XflAA/9mp521o3EOeMRtdYPQom.QHTPp3gR35I0htl5Lv3q"
+        },
+        {
+            "name":"PRAJWAL",
+            "email":"PRAJWAL",
+            "pass":"$2b$10$kd7e3DDr42uvb2onvY9oo.lf9Em.QZT3SbH6.3wOV6ICblRI1Ux6.",
         }
     ]
 
