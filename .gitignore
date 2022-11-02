@@ -1,4 +1,4 @@
-# /.env
+/.env
 /node_modules
-# controllers/dbUsers.js
+controllers/dbUsers.js
 /.gitignore
