@@ -239,9 +239,15 @@ async function sec_delete(id, data) {
 
 async function sec_save() {
     spin.style.display = "block"
+    regex = /[`~!@#$%^&*()_|+\=?;:'",.<>\{\}\[\]\\\/]/gi
     if (section.value === '') {
         alert("Section field required.")
         spin.style.display = "none"
+        return
+    }
+    if (regex.exec(section.value)) {
+        spin.style.display = "none"
+        alert("Invalid name. Special characters are not allowed.");
         return
     }
     await fetch(`/api/v1/section/${id}`, {
@@ -257,6 +263,7 @@ async function sec_save() {
             return
         }
         setTimeout(function () { snackBar('Section Saved') }, 1000);
+        bnt.innerHTML = '+'
         await btn_sec()
     })
     spin.style.display = "none"
