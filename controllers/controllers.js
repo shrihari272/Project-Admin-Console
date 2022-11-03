@@ -22,18 +22,7 @@ const getItems = async (req, res, next) => {
         return res.redirect('/api/v1/login')
     try {
         const item = await model.findOne({ _id: req.params.id })
-        res.status(200).send({
-            task: `<section class="content-input">
-            <div class="content-space-input">
-                <select type="text" id="section" placeholder="Section">
-                        <option value="${item.section}">#${item.section}</option>
-                </select>     
-                <input type="text" id="description" placeholder="Description" value="${item.description}"> 
-                <textarea id="code" placeholder="Code">${item.code}</textarea>
-                <button id="submit" onclick="update()">Edit</button>
-            </div>
-            <button class="floating-bnt" onclick="change()"><</button>
-        </section>`})
+        res.status(200).json(item)
     } catch (error) {
         res.status(500).json({ msg: error })
     }

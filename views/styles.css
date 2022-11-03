@@ -43,7 +43,7 @@ img {
     top: 0.5rem;
 }
 
-ul{
+ul {
     display: flex;
     gap: 1rem;
 }
@@ -225,10 +225,6 @@ footer {
     outline: none;
 }
 
-#code:focus {
-    outline: none;
-}
-
 #description {
     font-size: 1rem;
     height: 2.5rem;
@@ -239,6 +235,31 @@ footer {
     background: linear-gradient(to right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
     color: white;
     margin: 3px 3px;
+}
+
+.ql-toolbar {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    border: none;
+    border-radius: 10px;
+    outline: none;
+}
+
+.ql-toolbar.ql-snow {
+    border: none;
+}
+
+.ql-toolbar .ql-stroke {
+    fill: none;
+    stroke: #fff;
+}
+
+.ql-toolbar .ql-fill {
+    fill: #fff;
+    stroke: none;
+}
+
+.ql-editor.ql-blank::before {
+    color: white;
 }
 
 #code {

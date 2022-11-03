@@ -1,8 +1,20 @@
-var bnt = document.querySelector('.floating-bnt')
-var all_section = ''
-var all_section_arrange = ''
-var btn_section = ''
-var id = ''
+var bnt = document.querySelector('.floating-bnt');
+var all_section = '';
+var all_section_arrange = '';
+var btn_section = '';
+var id = '';
+var code;
+var toolbarOpt = [
+    ['bold','italic','underline','strike'],
+    ['code-block']
+]
+var options = {
+modules: {
+    toolbar: toolbarOpt,
+},
+placeholder: 'Code',
+theme: 'snow'
+};
 async function getAllItems() {
     spin.style.display = "block"
     document.querySelector('body').style.overflow = "hidden"
@@ -70,11 +82,12 @@ async function change() {
                         ${option}
                     </select>    
                     <input type="text" id="description" placeholder="Description">   
-                    <textarea id="code" placeholder="Code"></textarea>
+                    <div id="code"></div>
                     <button id="submit" onclick="create()">Save</button>
                 </div>
                 <button class="floating-bnt" onclick="change()"><</button>
             </section>`
+        code = new Quill('#code', options)
         bnt = document.querySelector('.floating-bnt')
         document.querySelector('.sec-bnt').style.display = 'none';
     }
@@ -85,14 +98,14 @@ async function change() {
 
 /////////////////////Creating files
 async function create() {
-    if (section.value === 'select' || description.value === '' || code.value === '') {
+    if (section.value === 'select' || description.value === '' || code.root.innerHTML === '<p><br></p>') {
         alert('All field are required')
         return
     }
     spin.style.display = "block"
     await fetch('/api/v1/task/section/python', {
         method: 'POST',
-        body: JSON.stringify({ section: section.value, description: description.value, code: code.value }),
+        body: JSON.stringify({ section: section.value, description: description.value, code: code.root.innerHTML }),
         headers: {
             "Content-Type": "application/json"
         },
@@ -113,7 +126,22 @@ async function getItem() {
     })
         .then((data) => {
             bnt.innerText = '<'
-            main.innerHTML = data.task
+            var editor = `
+            <section class="content-input">
+            <div class="content-space-input">
+                <select type="text" id="section" placeholder="Section">
+                <option value="${data.section}">#${data.section}</option>
+                </select>     
+                <input type="text" id="description" placeholder="Description" value="${data.description}"> 
+                <div id="code"></div>
+                <button id="submit" onclick="update()">Edit</button>
+            </div>
+            <button class="floating-bnt" onclick="change()"><</button>
+        </section>
+            `
+            main.innerHTML = editor
+            code = new Quill('#code', options) 
+            code.root.innerHTML = data.code
         }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
@@ -144,20 +172,20 @@ function click_listen() {
 }
 
 async function update() {
-    if (section.value === 'select' || description.value === '' || code.value === '') {
+    if (section.value === 'select' || description.value === '' || code.root.innerHTML === '<p><br></p>') {
         alert('All fields are required')
         return
     }
     spin.style.display = "block"
     await fetch(`/api/v1/task/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ id: id, section: section.value, description: description.value, code: code.value }),
+        body: JSON.stringify({ id: id, section: section.value, description: description.value, code: code.root.innerHTML }),
         headers: {
             "Content-Type": "application/json"
         },
     }).then(() => {
         snackBar("Code Edited")
-        setTimeout(function () { location.reload() }, 1000);
+        setTimeout(function () {  }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
