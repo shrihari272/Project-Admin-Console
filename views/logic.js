@@ -185,7 +185,7 @@ async function update() {
         },
     }).then(() => {
         snackBar("Code Edited")
-        setTimeout(function () {  }, 1000);
+        setTimeout(function () { location.reload() }, 1000);
     }).catch((e) => console.log(e))
     spin.style.display = "none"
 }
